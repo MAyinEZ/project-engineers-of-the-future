@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Трекер задач</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style1.css') }}">
+</head>
+<body>
+<div class="top">
+  <h1>Трекер Задач</h1>
+  <div class="user">
+    Привет, {{ username }}! Ваш код: {{ code }}
+    <a href="/out">Выйти</a>
+  </div>
+</div>
+
+<div class="button">
+    <BUTTON> <a href="/workers" class="button"> 👥 Список рабочих</a></BUTTON>
+</div>
+
+<div class="box">
+  <h3>Новая задача</h3>
+  <form action="/add_task" method="POST" enctype="multipart/form-data">
+    <input type="text" name="name_task" maxlength="150" placeholder="Название" required>
+    <input type="text" name="task_description" maxlength="1000" placeholder="Описание">
+    <button type="submit" class="toper">Добавить</button>
+  </form>
+</div>
+
+<div class="tasks-list">
+  {% if tasks %}
+    {% for task in tasks %}
+      <div class="task">
+        <div class="name_task">{{ task[0] }}</div>
+        <div class="task_description">{{ task[1] }}</div>
+        <div class="task-time">Создано: {{ task[2] }}</div>
+      </div>
+    {% endfor %}
+  {% else %}
+  <div class="task">
+    <div class="title">Задач пока нет</div>
+    <div class="desc">Создайте свою первую задачу!</div>
+  </div>
+{% endif %}
+</div>
+</body>
+</html>
