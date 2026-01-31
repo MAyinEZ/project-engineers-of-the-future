@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Рабочие</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style2.css') }}">
+</head>
+<body>
+
+<div class="top">
+ <h1>Рабочие</h1>
+  <div class="username">
+      Привет, {{ username }}!
+      <a href="/index" class="back">Назад</a>
+  </div>
+</div>
+
+<div class="top2">
+ <div class="top3">
+    <h2>Список рабочих</h2>
+    <p>Всего: {{ workers|length }}</p>
+</div>
+
+{% if workers %}
+<table class="tablica">
+  <tr class="tablica1">
+    <th>Логин</th>
+    <th>Имя</th>
+    <th>Фамилия</th>
+    <th>Отчество</th>
+    <th>Код</th>
+    <th>Задача</th>
+  </tr>
+{% for worker in workers %}
+<tr class="workers">
+     <td class="login">{{ worker[0] }}</td>
+     <td class="name">{{ worker[1] if worker[1] else "-" }}</td>
+     <td class="name">{{ worker[2] if worker[2] else "-" }}</td>
+     <td class="name">{{ worker[3] if worker[3] else "-" }}</td>
+     <td><div class="codes">{{ worker[4] }}</div></td>
+     <td class="task">{{ worker[5] if worker[5] else "Нет задачи" }}</td>
+</tr>
+{% endfor %}
+</table>
+</div>
+{% endif %}
+<div class="buttons">
+    <button class="ref" onclick="window.location.reload()">Обновить</button>
+    <a href="/index" class="index">Главная</a>
+</div>
+</div>
+
+</body>
+</html>

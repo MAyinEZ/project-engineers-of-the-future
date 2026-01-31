@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Вход</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <div class="box">
+    <h1>Трекер Задач</h1>
+
+    <div class="tabs">
+      <div class="tab on" onclick="show('logForm')">Вход</div>
+      <div class="tab" onclick="show('regForm')">Регистрация</div>
+    </div>
+
+    <div>
+
+      <form id="logForm" class="form on" action="/login" method="POST">
+        <input type="text" name="user" placeholder="Логин" required>
+        <input type="password" name="pwd" placeholder="Пароль" required>
+        <button type="submit" class="toper">Войти</button>
+      </form>
+
+      <form id="regForm" class="form" action="/register" method="POST">
+        <input type="text" name="user" placeholder="Создайте логин Пример:Дмитрий Сергеевич" required>
+        <input type="password" name="pwd" placeholder="Новый пароль Пример: maxonethebest" required>
+        <input type="text" name="code" placeholder="Код Босса Пример:1234" required>
+        <button type="submit" class="toper toper2">Регистрация</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    function show(formId) {
+      document.querySelectorAll('.form').forEach(f => f.classList.remove('on'));
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('on'));
+      document.getElementById(formId).classList.add('on');
+      event.target.classList.add('on');
+    }
+  </script>
+</body>
+</html>
