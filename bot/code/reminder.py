@@ -10,7 +10,7 @@ import keyboards
 bot = Bot(token=TOKEN)
 
 async def reminder():
-    conn_users = sqlite3.connect(r'C:\Users\provi\OneDrive\Desktop\project\database\users.db')
+    conn_users = sqlite3.connect(r'C:\Users\provi\OneDrive\Desktop\projectall\project\database\users.db')
     cursor = conn_users.cursor()
     cursor.execute("SELECT user_id, task_description, task_time, task_start_time, check_for_reminder, sent_message FROM workers WHERE task_description IS NOT NULL")
     users = cursor.fetchall()

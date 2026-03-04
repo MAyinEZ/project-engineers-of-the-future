@@ -4,7 +4,7 @@ from apscheduler.triggers.interval import IntervalTrigger
 from datetime import datetime
 
 async def delete_users():
-    conn_users = sqlite3.connect(r'C:\Users\provi\OneDrive\Desktop\project\database\users.db')
+    conn_users = sqlite3.connect(r'C:\Users\provi\OneDrive\Desktop\projectall\project\database\users.db')
     cursor = conn_users.cursor()
     cursor.execute("SELECT data_last_call, user_id FROM workers")
     users = cursor.fetchall()

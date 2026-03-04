@@ -31,7 +31,7 @@ class del_user(StatesGroup):
 @router.callback_query(F.data == "yes")
 async def accept(callback: CallbackQuery, bot:Bot):
     user_id = callback.from_user.id
-    users = sqlite3.connect(r'C:\Users\provi\OneDrive\Desktop\project\database\users.db')
+    users = sqlite3.connect(r'C:\Users\provi\OneDrive\Desktop\projectall\project\database\users.db')
     cursor = users.cursor()
     cursor.execute("UPDATE tasks SET check_acceptance = ? WHERE user_id = ?", (2,user_id))
     cursor.execute("SELECT task_description, task_time, sent_message FROM tasks WHERE user_id = ?",(user_id,))
@@ -45,7 +45,7 @@ async def accept(callback: CallbackQuery, bot:Bot):
 @router.callback_query(F.data == "no")
 async def accept(callback: CallbackQuery, state: FSMContext,bot:Bot):
     user_id = callback.from_user.id
-    users = sqlite3.connect(r'C:\Users\provi\OneDrive\Desktop\project\database\users.db')
+    users = sqlite3.connect(r'C:\Users\provi\OneDrive\Desktop\projectall\project\database\users.db')
     cursor = users.cursor()
     cursor.execute("SELECT sent_message FROM tasks WHERE user_id = ?",(user_id,))
     user = cursor.fetchone()
@@ -62,7 +62,7 @@ async def registration_name(message: types.Message, state: FSMContext, bot:Bot):
     last_message_id = message.message_id
     user_id = message.from_user.id
     await delete_message(bot, user_id, last_message_id - 1)
-    users = sqlite3.connect(r'C:\Users\provi\OneDrive\Desktop\project\database\users.db')
+    users = sqlite3.connect(r'C:\Users\provi\OneDrive\Desktop\projectall\project\database\users.db')
     cursor = users.cursor()
     cursor.execute("UPDATE tasks SET check_acceptance = ?, explanation_reason_refusal = ? WHERE user_id = ?", (3,answer,user_id))
     users.commit()
@@ -75,7 +75,7 @@ async def cancel_state_handler(callback: types.CallbackQuery, state: FSMContext,
     current_state = await state.get_state()
     user_id = callback.from_user.id
     if current_state == "refusal_task:waiting_for_answer":
-        conn_users = sqlite3.connect(r'C:\Users\provi\OneDrive\Desktop\project\database\users.db')
+        conn_users = sqlite3.connect(r'C:\Users\provi\OneDrive\Desktop\projectall\project\database\users.db')
         cursor = conn_users.cursor()
         cursor.execute("SELECT task_description, task_time, sent_message FROM tasks WHERE user_id = ?", (user_id,))
         user = cursor.fetchone()
@@ -108,7 +108,7 @@ async def degree_readiness(callback: types.CallbackQuery,bot:Bot):
     number_str = callback.data.replace("num_", "")
     selected_number = int(number_str)
     user_id = callback.from_user.id
-    conn = sqlite3.connect(r'C:\Users\provi\OneDrive\Desktop\project\database\users.db')
+    conn = sqlite3.connect(r'C:\Users\provi\OneDrive\Desktop\projectall\project\database\users.db')
     cursor = conn.cursor()
     cursor.execute("UPDATE tasks SET degree_of_readiness = ? WHERE user_id = ?",(selected_number,user_id))
     conn.commit()
@@ -120,7 +120,7 @@ async def degree_readiness(callback: types.CallbackQuery,bot:Bot):
 @router.message(Command("start"))
 async def start(message: types.Message, state: FSMContext):
     user_id = message.from_user.id
-    conn = sqlite3.connect(r'C:\Users\provi\OneDrive\Desktop\project\database\users.db')
+    conn = sqlite3.connect(r'C:\Users\provi\OneDrive\Desktop\projectall\project\database\users.db')
     cursor = conn.cursor()
     cursor.execute("SELECT * FROM workers WHERE user_id = ?", (user_id,))
     user_data = cursor.fetchone()
@@ -182,7 +182,7 @@ async def registration_code(message: types.Message, state: FSMContext, bot:Bot):
     last_message_id = message.message_id
     user_id = message.from_user.id
     await delete_message(bot, user_id, last_message_id - 1)
-    conn = sqlite3.connect(r'C:\Users\provi\OneDrive\Desktop\project\database\users.db')
+    conn = sqlite3.connect(r'C:\Users\provi\OneDrive\Desktop\projectall\project\database\users.db')
     cursor = conn.cursor()
     cursor.execute("SELECT * FROM bosses WHERE code = ?", (code,))
     user = cursor.fetchone()
@@ -210,8 +210,7 @@ async def registration_code(message: types.Message, state: FSMContext, bot:Bot):
         
         os.makedirs(rf"C:\Users\provi\OneDrive\Desktop\project\папки пользователей\{user_id}", exist_ok=True)
 
-        text = f"🎉 Регистрация завершена!\n\nВаши данные:\n👤 Имя: {name}\n👤 Фамилия: {surname}\n👤 Отчество: {patronymic}\n"
-        f"💼 Ваш начальник: {boss[0]} {boss[1]} {boss[2]}\n\nТеперь вы можете использовать все возможности бота! Введите /start"
+        text = f"🎉 Регистрация завершена!\n\nВаши данные:\n👤 Имя: {name}\n👤 Фамилия: {surname}\n👤 Отчество: {patronymic}\n"f"💼 Ваш начальник: {boss[0]} {boss[1]} {boss[2]}\n\nТеперь вы можете использовать все возможности бота! Введите /start"
         await message.answer(text)
 
 @router.message(lambda message: message.text == "📝 Перерегистрация")
@@ -225,7 +224,7 @@ async def delete_data_user(message: types.Message, state: FSMContext, bot:Bot):
 @router.callback_query(F.data == "accept")
 async def accept(callback: CallbackQuery, state: FSMContext, bot:Bot):
     user_id = callback.from_user.id
-    users = sqlite3.connect(r'C:\Users\provi\OneDrive\Desktop\project\database\users.db')
+    users = sqlite3.connect(r'C:\Users\provi\OneDrive\Desktop\projectall\project\database\users.db')
     cursor = users.cursor()
     cursor.execute("DELETE FROM workers WHERE user_id = ?",(user_id,))
     cursor.execute("DELETE FROM tasks WHERE user_id = ?",(user_id,))
@@ -242,7 +241,7 @@ async def current_task(message: types.Message, bot:Bot):
     await message.delete() 
     last_message_id = message.message_id
     await delete_message(bot, user_id, last_message_id - 1)
-    users = sqlite3.connect(r'C:\Users\provi\OneDrive\Desktop\project\database\users.db')
+    users = sqlite3.connect(r'C:\Users\provi\OneDrive\Desktop\projectall\project\database\users.db')
     cursor_users = users.cursor()
     cursor_users.execute("SELECT task_description, task_time, task_start_time FROM workers WHERE user_id = ?",(user_id,))
     user_data = cursor_users.fetchone()
@@ -275,7 +274,7 @@ async def complete_task(message: types.Message,state: FSMContext, bot:Bot):
     await message.delete() 
     last_message_id = message.message_id
     await delete_message(bot, user_id, last_message_id - 1)
-    users = sqlite3.connect(r'C:\Users\provi\OneDrive\Desktop\project\database\users.db')
+    users = sqlite3.connect(r'C:\Users\provi\OneDrive\Desktop\projectall\project\database\users.db')
     cursor_users = users.cursor()
     cursor_users.execute("SELECT task_description FROM workers WHERE user_id = ?",(user_id,))
     user_data = cursor_users.fetchone()
@@ -311,7 +310,7 @@ async def handle_files(message: types.Message, state: FSMContext, bot:Bot):
 
     await message.answer("✅ Файл/отчёт отправлен")
     
-    users = sqlite3.connect(r'C:\Users\provi\OneDrive\Desktop\project\database\users.db')
+    users = sqlite3.connect(r'C:\Users\provi\OneDrive\Desktop\projectall\project\database\users.db')
     cursor_users = users.cursor()
     cursor_users.execute("SELECT task_description FROM workers WHERE user_id = ?",(user_id,))
     user_data = cursor_users.fetchone()

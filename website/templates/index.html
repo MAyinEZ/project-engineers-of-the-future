@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <title>Трекер задач</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style1.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style2.css') }}">
 </head>
 <body>
 <div class="top">
@@ -14,34 +15,56 @@
   </div>
 </div>
 
-<div class="button">
-    <BUTTON> <a href="/workers" class="button"> 👥 Список рабочих</a></BUTTON>
-</div>
 
 <div class="box">
   <h3>Новая задача</h3>
-  <form action="/add_task" method="POST" enctype="multipart/form-data">
-    <input type="text" name="name_task" maxlength="150" placeholder="Название" required>
-    <input type="text" name="task_description" maxlength="1000" placeholder="Описание">
-    <button type="submit" class="toper">Добавить</button>
-  </form>
-</div>
+  <form action="/add_task" method="POST">
 
-<div class="tasks-list">
-  {% if tasks %}
-    {% for task in tasks %}
-      <div class="task">
-        <div class="name_task">{{ task[0] }}</div>
-        <div class="task_description">{{ task[1] }}</div>
-        <div class="task-time">Создано: {{ task[2] }}</div>
-      </div>
-    {% endfor %}
-  {% else %}
-  <div class="task">
-    <div class="title">Задач пока нет</div>
-    <div class="desc">Создайте свою первую задачу!</div>
-  </div>
-{% endif %}
+    <select name="worker_username" required>
+        <option value="">Выберите рабочего</option>
+        {% for worker in workers %}
+            <option value="{{ worker[0] }}">{{ worker[0] }}</option>
+        {% endfor %}
+    </select>
+
+    <input type="text" name="name_task" maxlength="150" placeholder="Название" required>
+
+    <input type="text" name="task_description" maxlength="1000" placeholder="Описание">
+
+    <input type="number" name="days" min="1" placeholder="Срок (дней)" required>
+
+    <button type="submit" class="toper">Добавить</button>
+</form>
 </div>
+<hr>
+
+<h2 style="text-align:center;">Список рабочих</h2>
+
+{% if workers %}
+<table class="tablica">
+  <tr class="tablica1">
+    <th>Логин</th>
+    <th>Имя</th>
+    <th>Фамилия</th>
+    <th>Отчество</th>
+    <th>Код</th>
+    <th>Задача</th>
+  </tr>
+
+{% for worker in workers %}
+<tr class="workers">
+     <td>{{ worker[0] }}</td>
+     <td>{{ worker[1] if worker[1] else "-" }}</td>
+     <td>{{ worker[2] if worker[2] else "-" }}</td>
+     <td>{{ worker[3] if worker[3] else "-" }}</td>
+     <td>{{ worker[4] }}</td>
+     <td>{{ worker[5] if worker[5] else "Нет задачи" }}</td>
+</tr>
+{% endfor %}
+</table>
+{% else %}
+<p style="text-align:center;">Рабочих пока нет</p>
+{% endif %}
+
 </body>
 </html>

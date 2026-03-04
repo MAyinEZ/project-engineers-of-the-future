@@ -6,7 +6,7 @@ waiting_for_file = set()
 TOKEN = '7634566802:AAHCtstXjXwUc8DjM-Mdf9qrgnn7VXOlgMs'
 
 def init_databases():
-    users = sqlite3.connect(r'C:\Users\provi\OneDrive\Desktop\project\database\users.db')
+    users = sqlite3.connect(r'C:\Users\provi\OneDrive\Desktop\projectall\project\database\users.db')
     cursor_users = users.cursor()
     cursor_users.execute('''CREATE TABLE IF NOT EXISTS workers (
         user_id INTEGER PRIMARY KEY,
@@ -40,7 +40,9 @@ def init_databases():
         explanation_reason_refusal TEXT DEFAULT NULL,
         degree_of_readiness INTEGER DEFAULT NULL,
         message_report TEXT NULL,
-        data_issue_task TIMESTAMP NULL
+        data_issue_task TIMESTAMP NULL,
+        days INTEGER,
+        worker_username INTEGER
     )''')
     users.commit()
     users.close()
@@ -56,7 +58,7 @@ async def delete_message(bot, chat_id, message_id):
             return
         
 def datalastcall(user_id):
-    conn = sqlite3.connect(r'C:\Users\provi\OneDrive\Desktop\project\database\users.db')
+    conn = sqlite3.connect(r'C:\Users\provi\OneDrive\Desktop\projectall\project\database\users.db')
     cursor = conn.cursor()
     cursor.execute("UPDATE workers SET data_last_call = datetime('now', '+3 hours') WHERE user_id = ?",(user_id,))
     conn.commit()

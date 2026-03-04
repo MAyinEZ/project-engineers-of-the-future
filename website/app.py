@@ -23,7 +23,7 @@ def login():
     if not username or not password:
         return "Заполните все поля! <a href='/'>Назад</a>"
 
-    conn = sqlite3.connect(r'C:\Users\provi\OneDrive\Desktop\project\database\users.db')
+    conn = sqlite3.connect('users.db')
     cursor = conn.cursor()
     cursor.execute("SELECT password FROM bosses WHERE username = ?", (username,))
     res = cursor.fetchone()
@@ -48,15 +48,33 @@ def register():
     if not username or not password or not code:
         return "Заполните все поля! <a href='/'>Назад</a>"
 
-    conn = sqlite3.connect(r'C:\Users\provi\OneDrive\Desktop\project\database\users.db')
+    conn = sqlite3.connect('users.db')
     cursor = conn.cursor()
 
+    cursor.execute("SELECT username FROM bosses WHERE username = ?", (username,))
+    notuser = cursor.fetchone()
+
+    if notuser:
+        conn.close()
+        return "Такой пользователь уже существует! <a href='/'>Назад</a>"
+
+
+    cursor.execute("SELECT code FROM bosses WHERE code = ?", (code,))
+    notcode = cursor.fetchone()
+
+    if notcode:
+        conn.close()
+        return "Такой код уже существует! <a href='/'>Назад</a>"
+
     try:
-        cursor.execute("INSERT INTO bosses (username, password, code) VALUES (?, ?, ?)",
-                       (username, password, code))
+        cursor.execute(
+            "INSERT INTO bosses (username, password, code) VALUES (?, ?, ?)",
+            (username, password, code)
+        )
         conn.commit()
         conn.close()
-        return "Успешно зарегистрирован! Теперь войдите. <a href='/'>Войти</a>"
+        return "Успешно зарегистрирован! <a href='/'>Войти</a>"
+
     except sqlite3.IntegrityError:
         conn.close()
         return "Такой пользователь уже есть! <a href='/'>Назад</a>"
@@ -66,33 +84,31 @@ def register():
 def index():
     if 'username' in session:
 
-        conn = sqlite3.connect(r'C:\Users\provi\OneDrive\Desktop\project\database\users.db')
+        conn = sqlite3.connect('users.db')
         cursor = conn.cursor()
+
         cursor.execute("SELECT username, code FROM bosses WHERE username = ?", (session['username'],))
-        users1 = cursor.fetchone()
+        user_data = cursor.fetchone()
+
+        cursor.execute("SELECT name_task, task_description, data_issue_task FROM tasks")
+        tasks = cursor.fetchall()
+
+        cursor.execute("SELECT username, name, surname, patronymic, code, task_description FROM workers")
+        workers = cursor.fetchall()
+
         conn.close()
 
-        if users1:
-            username, code = users1
+        if user_data:
+            username, code = user_data
+            return render_template("index.html", username=username, code=code, tasks=tasks, workers=workers)
 
-
-            conn = sqlite3.connect(r'C:\Users\provi\OneDrive\Desktop\project\database\users.db')
-            cursor = conn.cursor()
-
-            cursor.execute("SELECT name_task, task_description, data_issue_task FROM tasks")
-            tasks = cursor.fetchall()
-            conn.close()
-
-            return render_template("index.html",username=username,code=code,tasks=tasks)
     return redirect(url_for('login_page'))
-
-
 @app.route('/workers')
 def workers():
     if 'username' not in session:
         return redirect(url_for('login_page'))
 
-    conn = sqlite3.connect(r'C:\Users\provi\OneDrive\Desktop\project\database\users.db')
+    conn = sqlite3.connect('users.db')
     cursor = conn.cursor()
 
 
@@ -108,33 +124,41 @@ def add_task():
         return redirect(url_for('login_page'))
 
     name_task = request.form.get('name_task')
-    text = request.form.get('task_description')
+    worker_username = request.form.get('worker_username')
+    days = request.form.get('days')
+
+    if not name_task or not worker_username or not days:
+        return "Заполните все поля! <a href='/index'>Назад</a>"
+
+    try:
+        days = int(days)
+    except:
+        return "Срок должен быть числом! <a href='/index'>Назад</a>"
 
 
-    data_issue_task = datetime.datetime.now().strftime("%d.%m.%Y %H:%M")
+    task_text = f"{name_task} ({days} дней)"
 
-
-
-
-
-    if not name_task:
-        return "Название задачи обязательно! <a href='/index'>Назад</a>"
-
-    conn = sqlite3.connect(r'C:\Users\provi\OneDrive\Desktop\project\database\users.db')
+    conn = sqlite3.connect('users.db')
     cursor = conn.cursor()
-    cursor.execute("UPDATE tasks SET name_task = ?, task_description = ?, task_time = ?, check_acceptance = ?, degree_of_readiness = ?, data_issue_task = ? WHERE user_id = ?", ("делать проект",text,300,1,0,data_issue_task,427831749))
+
+
+    cursor.execute("SELECT task_description FROM workers WHERE username = ?", (worker_username,))
+    cur = cursor.fetchone()
+
+    if cur and cur[0]:
+        conn.close()
+        return "У рабочего уже есть задача, подождите выполнения! <a href='/index'>Назад</a>"
+
+    cursor.execute("""
+        UPDATE workers
+        SET task_description = ?
+        WHERE username = ?
+    """, (task_text, worker_username))
+
     conn.commit()
     conn.close()
 
-
-
-
     return redirect(url_for('index'))
-
-
-
-
-
 @app.route('/out')
 def logout():
     session.pop('username', None)

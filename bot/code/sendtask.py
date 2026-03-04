@@ -10,7 +10,7 @@ import keyboards
 bot = Bot(token=TOKEN)
 
 async def send_task():
-    conn_users = sqlite3.connect(r'C:\Users\provi\OneDrive\Desktop\project\database\users.db')
+    conn_users = sqlite3.connect(r'C:\Users\provi\OneDrive\Desktop\projectall\project\database\users.db')
     cursor = conn_users.cursor()
     cursor.execute("SELECT user_id, name_task, task_description, task_time, sent_message FROM tasks WHERE check_acceptance = 1")
     users = cursor.fetchall()
